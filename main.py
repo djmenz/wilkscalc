@@ -3,8 +3,6 @@
 # Import the Flask Framework
 from flask import Flask
 
-# Note: We don't need to call run() since our application is embedded within
-# the App Engine WSGI application server.
 from flask import request
 import math
 
@@ -13,9 +11,7 @@ from flask import render_template
 
 from decimal import *
 
-
-#print math.ceil(4.2)
-# usage http://localhost:5000/wilks?bw=75&result=560
+#usage http://localhost:5000/wilks?bw=75&result=560
 
 app = Flask(__name__)
 
