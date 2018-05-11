@@ -1,0 +1,125 @@
+ <meta name="viewport" content="width=device-width">
+<html>
+  <head>
+    <title>Wilks powerlifting calculator</title>
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+  
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="static/main.css">
+  </head>
+  <body>
+
+
+<div class="navbar navbar-fixed-top"> </div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1> Wilks calculator </h1><br>
+  </div>
+</div>
+
+<div class="page-header"></div>
+
+
+
+  <div class="container">
+  <div class="flex-item-main">
+    <h2> Calculate wilks score <br></h2>
+
+    Units<br>
+    <select id="units0" class="form-control" onchange="link_selections0()">
+    <option value="true">Kilograms</option>
+    <option value="false">Pounds</option>
+    </select><br>
+
+    Gender<br>
+    <select id="gender0" class="form-control" onchange="link_selections0()">
+    <option value="true">Male</option>
+    <option value="false">Female</option>
+    </select>
+    <br>Bodyweight<br>
+    <input type="text" name="bw" id="bw0" class="form-control"><br>
+    Total<br>
+    <input type="text" name="total0" id="total0" class="form-control"><br/>
+    <input type="submit" name="mysubmit0" value="Calculate" onclick=calculate_wilks() class="btn btn-primary"/>
+    <br><br>Wilks<br>
+    <label name="wilks0" id="wilks0" class="form-control">
+  </div>
+
+  <div class="flex-item-main">
+    <h2> Calculate total for specific Wilks </h2>
+
+    Units<br>
+    <select id="units1" class="form-control" onchange="link_selections1()">
+    <option value="true">Kilograms</option>
+    <option value="false">Pounds</option>
+    </select><br>
+
+    Gender<br>
+    <select id="gender1" class="form-control" onchange="link_selections1()">
+    <option value="true">Male</option>
+    <option value="false">Female</option>
+    </select>
+
+    <br>Bodyweight<br>
+    <input type="text" name="bw" id="bw" class="form-control"><br>
+    Desired Wilks Score<br>
+    <input type="text" name="wilks" id="wilks" class="form-control"><br/>
+    <input type="submit" name="mysubmit" value="Calculate" onclick=calculate_reverse() class="btn btn-primary"/>
+    <br><br>Required Total<br>
+    <label name="total" id="total1" class="form-control">
+    
+    
+  </div>
+
+  <div class="flex-item">
+  The wilks score is a way to compare 3 lift results for people of different bodyweights. <br><br>
+  A rough guide to how a wilks score rates (for drug free, 2 hour weigh in, belt/sleeves only):
+  <br><br>
+  <li> 250 - Beginner
+  <li> 350 - Intermediate
+  <li> 400 - Advanced
+  <li> 450 - Elite (national)
+  <li> 500 - Elite (world)
+  </div>
+
+  </div>
+
+
+  <script>
+  function calculate_reverse(){
+  url = "reversewilks_api?bw=" + $("#bw").val() + "&wilks=" + $("#wilks").val()+"&isMale=" + $("#gender1")[0].value + "&isMetric=" + $("#units1")[0].value;
+  
+  if ($("#units1")[0].value == 'true'){
+    unit = "kg";
+  } else {
+    unit = "lbs"
+  }
+
+  $.getJSON(url, function(data){
+     $("#total1").html(data.result+unit);
+  });
+  }
+
+  function calculate_wilks(){
+  url = "wilks_api?bw=" + $("#bw0").val() + "&total=" + $("#total0").val()+"&isMale="+ $("#gender0")[0].value + "&isMetric=" + $("#units0")[0].value;
+  $.getJSON(url, function(data){
+     $("#wilks0").html(data.result);
+  });
+  }
+
+  function link_selections0(){
+    $("#units1")[0].value = $("#units0")[0].value
+  $("#gender1")[0].value = $("#gender0")[0].value
+  }
+
+  function link_selections1(){
+    $("#units0")[0].value = $("#units1")[0].value
+  $("#gender0")[0].value = $("#gender1")[0].value
+  }
+  
+  </script>
+
+  </body>
+</html>
