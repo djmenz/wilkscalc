@@ -11,9 +11,16 @@ from flask import render_template
 
 from decimal import *
 
+import arrow
+import boto3
+
 #usage http://localhost:5000/wilks?bw=75&result=560
 
 app = Flask(__name__)
+
+#database global variables
+AWS_region = 'ap-southeast-2'
+wilks_dynamoDB_table = 'wilks_logging'
 
 @app.route("/")
 def reverse():
@@ -48,6 +55,29 @@ def add_numbers():
     result =  wilks / (500 /( (a)+(b*x)+(c*(x**2))+(d*(x**3))+(e*(x**4))+(f*(x**5))) )
     if (isMetric == 'false'):
         result = ( result * 2.204)
+
+    current_time = arrow.utcnow()
+    print('{}'.format(current_time))
+
+    dynamodb = boto3.resource('dynamodb', region_name=AWS_region)
+    table = dynamodb.Table(wilks_dynamoDB_table)
+
+    try:
+        table.put_item(
+            Item={
+                'timestamp': '{}'.format(current_time),
+                'wilks' : str(wilks),
+                'bw' : str(bw),
+                'male': str(isMale),
+                'total': str(math.ceil(result)),
+                'metric' : str(isMetric),
+                'function' : 'Reverse',
+
+            },
+            ConditionExpression='attribute_not_exists(url_link)'
+        )
+    except Exception as e:
+        print(e)
 
     return jsonify(result = math.ceil(result))
 
@@ -84,7 +114,30 @@ def add_numbers1():
 
     wilks_round = Decimal(str(wilks))
     wilks_round = wilks_round.quantize(Decimal('0.01'),ROUND_HALF_UP)
-    
+
+    current_time = arrow.utcnow()
+    print('{}'.format(current_time))
+
+    dynamodb = boto3.resource('dynamodb', region_name=AWS_region)
+    table = dynamodb.Table(wilks_dynamoDB_table)
+
+    try:
+        table.put_item(
+            Item={
+                'timestamp': '{}'.format(current_time),
+                'wilks' : str(wilks_round),
+                'bw' : str(bw),
+                'male': str(isMale),
+                'total': str(total),
+                'metric' : str(isMetric),
+                'function' : 'Forward',
+
+            },
+            ConditionExpression='attribute_not_exists(url_link)'
+        )
+    except Exception as e:
+        print(e)
+
     return jsonify(result = (str(wilks_round)))
 
 
