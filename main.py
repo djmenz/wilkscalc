@@ -14,8 +14,6 @@ from decimal import *
 import arrow
 import boto3
 
-#usage http://localhost:5000/wilks?bw=75&result=560
-
 app = Flask(__name__)
 
 #database global variables
